@@ -41,8 +41,8 @@
 #include <opencv2/opencv.hpp>
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
-#include <opencv/cvwimage.h>
-#include <opencv/highgui.h>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include <dynamic_reconfigure/server.h>
 #include <monocular_pose_estimator/MonocularPoseEstimatorConfig.h>
@@ -52,41 +52,39 @@
 namespace monocular_pose_estimator
 {
 
-class MPENode
-{
-private:
+  class MPENode
+  {
+  private:
+    ros::NodeHandle nh_;
+    ros::NodeHandle nh_private_;
 
-  ros::NodeHandle nh_;
-  ros::NodeHandle nh_private_;
+    image_transport::Publisher image_pub_; //!< The ROS image publisher that publishes the visualisation image
+    ros::Publisher pose_pub_;              //!< The ROS publisher that publishes the estimated pose.
 
-  image_transport::Publisher image_pub_; //!< The ROS image publisher that publishes the visualisation image
-  ros::Publisher pose_pub_; //!< The ROS publisher that publishes the estimated pose.
+    ros::Subscriber image_sub_;       //!< The ROS subscriber to the raw camera image
+    ros::Subscriber camera_info_sub_; //!< The ROS subscriber to the camera info
 
-  ros::Subscriber image_sub_; //!< The ROS subscriber to the raw camera image
-  ros::Subscriber camera_info_sub_; //!< The ROS subscriber to the camera info
+    dynamic_reconfigure::Server<monocular_pose_estimator::MonocularPoseEstimatorConfig> dr_server_; //!< The dynamic reconfigure server
+    //dynamic_reconfigure::Server<monocular_pose_estimator::MonocularPoseEstimatorConfig>::CallbackType cb_; //!< The dynamic reconfigure callback type
 
-  dynamic_reconfigure::Server<monocular_pose_estimator::MonocularPoseEstimatorConfig> dr_server_; //!< The dynamic reconfigure server
-  //dynamic_reconfigure::Server<monocular_pose_estimator::MonocularPoseEstimatorConfig>::CallbackType cb_; //!< The dynamic reconfigure callback type
+    geometry_msgs::PoseWithCovarianceStamped predicted_pose_; //!< The ROS message variable for the estimated pose and covariance of the object
 
-  geometry_msgs::PoseWithCovarianceStamped predicted_pose_; //!< The ROS message variable for the estimated pose and covariance of the object
+    bool have_camera_info_;            //!< The boolean variable that indicates whether the camera calibration parameters have been obtained from the camera
+    sensor_msgs::CameraInfo cam_info_; //!< Variable to store the camera calibration parameters
 
-  bool have_camera_info_; //!< The boolean variable that indicates whether the camera calibration parameters have been obtained from the camera
-  sensor_msgs::CameraInfo cam_info_; //!< Variable to store the camera calibration parameters
+    PoseEstimator trackable_object_; //!< Declaration of the object whose pose will be estimated
 
-  PoseEstimator trackable_object_; //!< Declaration of the object whose pose will be estimated
+  public:
+    MPENode(const ros::NodeHandle &nh, const ros::NodeHandle &nh_private);
+    MPENode() : MPENode(ros::NodeHandle(), ros::NodeHandle("~")) {}
+    ~MPENode();
 
-public:
+    void cameraInfoCallback(const sensor_msgs::CameraInfo::ConstPtr &msg);
 
-  MPENode(const ros::NodeHandle& nh, const ros::NodeHandle& nh_private);
-  MPENode() : MPENode( ros::NodeHandle(), ros::NodeHandle("~") ){}
-  ~MPENode();
+    void imageCallback(const sensor_msgs::Image::ConstPtr &image_msg);
 
-  void cameraInfoCallback(const sensor_msgs::CameraInfo::ConstPtr& msg);
-
-  void imageCallback(const sensor_msgs::Image::ConstPtr& image_msg);
-
-  void dynamicParametersCallback(monocular_pose_estimator::MonocularPoseEstimatorConfig &config, uint32_t level);
-};
+    void dynamicParametersCallback(monocular_pose_estimator::MonocularPoseEstimatorConfig &config, uint32_t level);
+  };
 
 } // monocular_pose_estimator namespace
 
