@@ -1,2 +1,5 @@
 # visual studio code settings folder
 .vscode/
+
+# rosbags (for testing)
+bags/
