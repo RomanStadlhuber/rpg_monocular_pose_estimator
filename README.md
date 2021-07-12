@@ -304,3 +304,27 @@ The placement of the LEDs on the target object can be arbitrary, but must be non
 ### Camera
 
 The camera used was a [MatrixVision](http://www.matrix-vision.com/) mvBlueFOX-MLC200w monochrome camera fitted with an infrared-pass filter. Its resolution is 752x480 pixels.
+
+## Misceral Information
+
+### Visual Studio Code Integration
+
+Apart from the dependencies listed above, the project makes use of the dynamic reconfigure feature.
+When developing in vscode, install the [ROS Extension](https://marketplace.visualstudio.com/items?itemName=ms-iot.vscode-ros) to prevent linter errors occurring from non-exsintent header files.
+To resolve the linter error, run the following command in the vscode task bar.
+
+```vscode task bar 
+> ROS: Update C++ Properties
+```
+
+#### Linter Include Path Suggestions
+
+Some include paths (as occurr on the default install options of all the software mentioned above) are
+
+```json
+"includePath": [
+        "${workspaceFolder}/**" // repo
+        "/opt/ros/noetic/include/**", // ros installation
+        "/usr/include/**" // eigen, opencv
+      ],
+```
