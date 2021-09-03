@@ -1,5 +1,8 @@
 # visual studio code settings folder
 .vscode/
 
+# doxygen generated files
+doxygen_documentation/html/
+doxygen_documentation/latex
 # rosbags (for testing)
 bags/
