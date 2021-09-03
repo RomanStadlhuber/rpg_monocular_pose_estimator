@@ -4,5 +4,6 @@
 # doxygen generated files
 doxygen_documentation/html/
 doxygen_documentation/latex
+doxygen_documentation/rpg_monocular_pose_estimator_tagfile.tag
 # rosbags (for testing)
 bags/
