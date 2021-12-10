@@ -3,3 +3,6 @@
 
 # rosbags (for testing)
 bags/
+
+# build folder
+build/
